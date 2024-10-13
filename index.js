@@ -9,15 +9,20 @@ app.get('/track', (req, res) => {
     const ip = req.ip; // Get the client's IP address
     const userAgent = req.get('User-Agent'); // Get the client's user agent
     const timestamp = new Date().toISOString(); // Timestamp of the email open
-    
-    // Log the data to a file
-    const logData = `${timestamp} - IP: ${ip}, User-Agent: ${userAgent}\n`;
-    fs.appendFile('email_tracking.log', logData, (err) => {
-        if (err) console.error('Error logging email open:', err);
-    });
 
-    // Send the tracking pixel (1x1 transparent gif)
-    res.sendFile(path.join(__dirname, 'tracking-pixel.gif'));
+    // Prepare data in JSON format
+    const logData = {
+        timestamp: timestamp,
+        ip: ip,
+        userAgent: userAgent
+    };
+
+    // Log the data to a file (optional)
+    const logString = `${timestamp} - IP: ${ip}, User-Agent: ${userAgent}\n`;
+    // fs.appendFileSync('email_open_log.txt', logString, 'utf8'); // Write to a log file
+
+    // Respond with the JSON data
+    res.json(logData);
 });
 
 // Start the server
